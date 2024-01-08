@@ -1,10 +1,33 @@
 mod commands;
 mod utils;
 
-use serenity::{framework::{StandardFramework, standard::{macros::{group, command}, CommandResult}}, model::{channel::Message, gateway::{GatewayIntents, Ready, Activity}}, client::{Context, EventHandler}, Client, async_trait};
+use serenity::{
+    framework::{
+        StandardFramework, 
+        standard::macros::group
+    }, 
+    model::gateway::{
+            GatewayIntents, Ready, Activity
+    }, 
+    client::{
+        Context, EventHandler
+    }, 
+    Client, async_trait
+};
 use songbird::SerenityInit;
 
-use crate::{commands::audio::play::*, utils::{get_status, get_shard_count}};
+use crate::{
+    commands::{
+        audio::{
+            play::*,
+            skip::*,
+        },
+        ping::*,
+    }, 
+    utils::{
+        get_status, get_shard_count
+    }
+};
 use crate::utils::{get_prefix, get_token};
 
 struct Handler;
@@ -21,7 +44,7 @@ impl EventHandler for Handler {
 }
 
 #[group]
-#[commands(ping, play)]
+#[commands(ping, play, skip)]
 struct General;
 
 
@@ -47,18 +70,18 @@ async fn main(){
     // let manager = client.shard_manager.clone();
 
     tokio::spawn(async move {
-        let _ = client.start_shards(get_shard_count())
+        let shard_count = get_shard_count();
+        if shard_count > 0 {
+        let _ = client.start_shards(shard_count)
             .await
             .map_err(|why| println!("Client ended: {:?}", why));   
+        }else{
+            let _ = client.start_autosharded()
+            .await
+            .map_err(|why| println!("Client ended: {:?}", why));   
+        }
     });
 
     let _signal_err = tokio::signal::ctrl_c().await;
     println!("Received Ctrl-C, Shutting down...");
-}
-
-
-#[command]
-async fn ping(ctx: &Context, msg: &Message) -> CommandResult{
-    msg.channel_id.say(&ctx, "Pong!").await.err();
-    Ok(())
 }

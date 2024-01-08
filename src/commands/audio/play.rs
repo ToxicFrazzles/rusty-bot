@@ -1,7 +1,6 @@
 use std::env;
 
-use serenity::{framework::standard::{macros::command, Args, CommandResult}, client::Context, model::channel::{Message, self}};
-use songbird::input::Input;
+use serenity::{framework::standard::{macros::command, Args, CommandResult}, client::Context, model::channel::Message};
 
 use crate::utils::send_message;
 
@@ -51,8 +50,10 @@ pub async fn play(ctx: &Context, msg: &Message, args: Args) -> CommandResult{
                     None
                 }
             }{
-                let _ = handler.play_source(src);
-                send_message(msg, ctx, "Playing...").await;
+                let track = handler.enqueue_source(src);
+                let metadata = track.metadata();
+
+                send_message(msg, ctx, format!("Added {} to queue. Position: {}", metadata.title.clone().unwrap(), handler.queue().len())).await;
             }
         }
     }

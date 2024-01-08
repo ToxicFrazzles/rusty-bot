@@ -18,7 +18,7 @@ pub fn get_status() -> String {
 pub fn get_shard_count() -> u64 {
     match env::var("SHARDS_COUNT"){
         Ok(str_count) => {str_count.parse::<u64>().expect(format!("Could not parse {str_count} as a 64-bit integer").as_str())},
-        Err(_) => {5}
+        Err(_) => {0}
     }
 }
 
