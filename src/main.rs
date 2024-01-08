@@ -23,6 +23,7 @@ use crate::{
             skip::*,
         },
         ping::*,
+        about::*,
     }, 
     utils::{
         get_status, get_shard_count
@@ -44,12 +45,18 @@ impl EventHandler for Handler {
 }
 
 #[group]
-#[commands(ping, play, skip)]
+#[commands(
+    about,  ping, 
+    
+    // Audio commands
+    play,   skip
+)]
 struct General;
 
 
 #[tokio::main]
 async fn main(){
+    println!("{:?}", GENERAL_GROUP);
     // Load .env file if it exists. Falls back to loading the variables from the actual environment
     dotenv::dotenv().ok();
 
@@ -67,21 +74,23 @@ async fn main(){
         .await
         .expect("Error creating client!!!");
 
-    // let manager = client.shard_manager.clone();
+    let manager = client.shard_manager.clone();
+
 
     tokio::spawn(async move {
-        let shard_count = get_shard_count();
-        if shard_count > 0 {
-        let _ = client.start_shards(shard_count)
-            .await
-            .map_err(|why| println!("Client ended: {:?}", why));   
-        }else{
-            let _ = client.start_autosharded()
-            .await
-            .map_err(|why| println!("Client ended: {:?}", why));   
-        }
+        tokio::signal::ctrl_c().await.expect("Could not register Ctrl-C handler");
+        println!("Received Ctrl-C, Shutting down...");
+        manager.lock().await.shutdown_all().await;
     });
 
-    let _signal_err = tokio::signal::ctrl_c().await;
-    println!("Received Ctrl-C, Shutting down...");
+    let shard_count = get_shard_count();
+    if shard_count > 0 {
+        let _ = client.start_shards(shard_count)
+        .await
+        .map_err(|why| println!("Client ended: {:?}", why));   
+    }else{
+        let _ = client.start_autosharded()
+        .await
+        .map_err(|why| println!("Client ended: {:?}", why));   
+    }
 }
