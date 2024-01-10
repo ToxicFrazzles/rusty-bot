@@ -1,14 +1,17 @@
 use poise::{FrameworkError, Framework};
 use reqwest::Client as ReqwestClient;
-use crate::utils::get_prefix;
+use sea_orm::{DatabaseConnection, Database};
+use crate::utils::{get_prefix, get_db_url};
 use crate::commands::{self, Error as CommandError};
 
 pub struct Data {
-    pub reqwest: ReqwestClient
+    pub reqwest: ReqwestClient,
+    pub db: DatabaseConnection
 }
 
-pub fn build() -> Framework<Data, CommandError>{
+pub async fn build() -> Framework<Data, CommandError>{
     let prefix = get_prefix();
+    let db_conn: DatabaseConnection = Database::connect(get_db_url()).await.expect("Failed to create database connection");
     
     poise::Framework::builder()
         .options(poise::FrameworkOptions { 
@@ -44,6 +47,7 @@ pub fn build() -> Framework<Data, CommandError>{
                 // ctx.set_activity(Activity::playing(get_status())).await;
                 Ok(Data{
                     reqwest: ReqwestClient::new(),
+                    db: db_conn
                 })
             })
         }).build()

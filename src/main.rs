@@ -18,7 +18,7 @@ async fn main(){
         | GatewayIntents::GUILD_VOICE_STATES 
         | GatewayIntents::GUILD_MEMBERS;
     // .client_settings(|c| c.register_songbird())
-    let framework = framework::build();
+    let framework = framework::build().await;
     let mut client = ClientBuilder::new(get_token(), intents)
         .framework(framework).register_songbird().await.expect("Error creating client");
 
