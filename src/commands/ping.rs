@@ -1,10 +1,10 @@
-use serenity::framework::standard::CommandResult;
-use serenity::framework::standard::macros::command;
-use serenity::model::channel::Message;
-use serenity::prelude::*;
+use crate::commands::{Context, Error};
 
-#[command]
-async fn ping(ctx: &Context, msg: &Message) -> CommandResult{
-    msg.channel_id.say(&ctx, "Pong!").await.err();
+#[poise::command(prefix_command)]
+pub async fn ping(
+    ctx: Context<'_>
+) -> Result<(), Error>{
+    ctx.say("Pong!").await?;
+    // println!("Ping! Pong!");
     Ok(())
 }
