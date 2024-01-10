@@ -2,7 +2,7 @@ use crate::framework::Data;
 
 pub mod audio;
 pub mod ping;
-// pub mod about;
+pub mod help;
 
 mod error;
 
@@ -19,5 +19,6 @@ pub fn get() -> Vec<poise::Command<Data, Error>>{
         audio::play::play(),
         audio::skip::skip(),
         audio::leave::leave(),
+        help::help(),
     ]
 }

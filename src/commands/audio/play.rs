@@ -4,7 +4,11 @@ use url::Url;
 use crate::commands::{Context, Error};
 use super::utils::join_channel;
 
-
+/// Play something in the voice chat
+/// 
+/// Play something either giving the search terms ot the direct URL
+/// !play rickroll
+/// !play <https://youtu.be/dQw4w9WgXcQ?si=PGAeVqQDRDPFTkI->
 #[poise::command(prefix_command, broadcast_typing, guild_only)]
 pub async fn play(
     ctx: Context<'_>,
