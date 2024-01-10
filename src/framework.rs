@@ -1,9 +1,6 @@
-use poise::serenity_prelude::{GatewayIntents, Activity};
-use poise::{FrameworkBuilder, FrameworkError, Framework, CreateReply};
-use songbird::SerenityInit;
+use poise::{FrameworkError, Framework};
 use reqwest::Client as ReqwestClient;
-
-use crate::utils::{get_prefix, get_status, get_token};
+use crate::utils::get_prefix;
 use crate::commands::{self, Error as CommandError};
 
 pub struct Data {

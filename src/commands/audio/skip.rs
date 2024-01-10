@@ -6,7 +6,11 @@ pub async fn skip(
     ctx: Context<'_>
 ) -> Result<()>{
     let conn = get_conn(&ctx).await?;
-    let _ = conn.lock().await.queue().skip();
-
+    if !conn.lock().await.queue().is_empty() {
+        ctx.say("Skipping track...").await?;
+        let _ = conn.lock().await.queue().skip();
+    }else{
+        ctx.say("Nothing in the queue to skip").await?;
+    }
     Ok(())
 }

@@ -1,6 +1,5 @@
-use songbird::input::{Input};
+use songbird::input::Input;
 use songbird::input::YoutubeDl;
-use songbird::tracks::Track;
 use url::Url;
 
 use crate::commands::{Context, Error};
@@ -27,8 +26,7 @@ pub async fn play(
     let mut src: Input = if let Ok(url) = Url::parse(&what) {
         YoutubeDl::new(req_client, url.to_string()).into()
     }else{
-        todo!()
-        // YoutubeDl::new_search(what, true).await?.into()
+        YoutubeDl::new_search(req_client, what).into()
     };
 
     let metadata = src.aux_metadata().await.unwrap();
