@@ -5,12 +5,15 @@ edition = "2021"
 
 [dependencies]
 dotenv = "^0.15"
-poise = "^0.5"
-serenity = { version = "^0.11", features = ["voice", "model"], default-features = false}
-songbird = { version = "^0.3", features = ["yt-dlp", "builtin-queue"]}
+poise = "0.6.1-rc1"
+reqwest = "0.11.23"
+serenity = { version = "^0.12", features = ["voice", "model"], default-features = false}
+songbird = { version = "^0.4", features = [ "builtin-queue"]}
 thiserror = "1.0.56"
 tokio = { version = "^1.21", features = ["macros", "rt-multi-thread", "sync", "time"]}
 tracing = "^0.1"
 tracing-futures = "^0.2"
 tracing-subscriber = "^0.3"
 url = "2.5.0"
+
+[dependencies.symphonia]

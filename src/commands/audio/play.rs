@@ -1,4 +1,6 @@
-use songbird::input::{Restartable, Input};
+use songbird::input::{Input};
+use songbird::input::YoutubeDl;
+use songbird::tracks::Track;
 use url::Url;
 
 use crate::commands::{Context, Error};
@@ -14,22 +16,27 @@ pub async fn play(
     ctx: Context<'_>,
     #[description = "What to play"]
     #[rest]
-    what: String
+    mut what: String
 ) -> Result<(), Error>{
     let (_guild_id, _channel_id, conn, _manager) = join_channel(&ctx).await?;
+    let req_client = ctx.data().reqwest.clone();
+    what = what.trim_start_matches("<").trim_end_matches(">").to_string();
 
-    let src: Input = if let Ok(url) = Url::parse(&what) {
-        Restartable::ytdl(url, true).await?.into()
+
+
+    let mut src: Input = if let Ok(url) = Url::parse(&what) {
+        YoutubeDl::new(req_client, url.to_string()).into()
     }else{
-        Restartable::ytdl_search(what, true).await?.into()
+        todo!()
+        // YoutubeDl::new_search(what, true).await?.into()
     };
 
-    let metadata = src.metadata.clone();
-    let _handle = conn.lock().await.enqueue_source(src);
+    let metadata = src.aux_metadata().await.unwrap();
+    let _handle = conn.lock().await.enqueue_input(src).await;
 
-    ctx.send(|r| {
-        r.content(format!("Queueing audio: {}", metadata.title.or(Some("No Title Found".to_string())).unwrap()))
-    }).await?;
+    let title = metadata.title.or(Some("No Title Found".to_string())).unwrap();
 
+    ctx.say(format!("Queueing audio: {title}")).await?;
+    
     Ok(())
 }

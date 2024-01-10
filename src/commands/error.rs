@@ -1,6 +1,6 @@
 use songbird::{
     error::JoinError as SongbirdJoinError,
-    input::error::Error as SongbirdInputError
+    // input::error::Error as SongbirdInputError
 };
 use thiserror::Error;
 
@@ -41,6 +41,6 @@ pub enum Error {
     #[error(transparent)]
     SongbirdJoin(#[from] SongbirdJoinError),
 
-    #[error(transparent)]
-    SongbirdInput(#[from] SongbirdInputError),
+    // #[error(transparent)]
+    // SongbirdInput(#[from] SongbirdInputError),
 }
