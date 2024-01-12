@@ -8,6 +8,7 @@ mod framework;
 mod logic;
 mod error;
 
+#[cfg(test)]
 mod tests;
 
 #[tokio::main]
