@@ -1,9 +1,18 @@
+[workspace]
+members = [".", "migration", "entities"]
+
+
+
 [package]
-name = "rusty-bot"
+name = "rusty_bot"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+migration = {path = "migration"}
+entities = {path = "entities"}
+
+
 dotenv = "^0.15"
 poise = "0.6.1-rc1"
 reqwest = "0.11.23"
@@ -16,8 +25,11 @@ tracing = "^0.1"
 tracing-futures = "^0.2"
 tracing-subscriber = "^0.3"
 url = "2.5.0"
-
 sea-orm = { version = "^0.12", features = [ "runtime-tokio-rustls", "macros" ] }
+regex = "1.10.2"
+
+[dev-dependencies]
+sea-orm = {features = ["mock"]}
 
 
 [features]

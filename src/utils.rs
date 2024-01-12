@@ -14,10 +14,10 @@ pub fn get_db_url() -> String {
     env::var("DATABASE_URL").expect("Expected DATABASE_URL in the environment")
 }
 
-// pub fn get_status() -> String {
-//     let prefix = get_prefix();
-//     env::var("DISCORD_STATUS").or::<String>(Ok(format!("{prefix}help"))).unwrap()
-// }
+pub fn get_status() -> String {
+    let prefix = get_prefix();
+    env::var("DISCORD_STATUS").or::<String>(Ok(format!("{prefix}help"))).unwrap()
+}
 
 // pub fn get_shard_count() -> u64 {
 //     match env::var("SHARDS_COUNT"){

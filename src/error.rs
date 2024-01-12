@@ -22,6 +22,14 @@ pub struct NoVoiceChannelIdError;
 pub struct NoSongbirdError;
 
 #[derive(Debug, Error)]
+#[error("User already blacklisted")]
+pub struct AlreadyBlacklistedError;
+
+#[derive(Debug, Error)]
+#[error("User not blacklisted")]
+pub struct NotBlacklistedError;
+
+#[derive(Debug, Error)]
 pub enum Error {
     #[error(transparent)]
     Serenity(#[from] serenity::Error),
@@ -43,4 +51,17 @@ pub enum Error {
 
     // #[error(transparent)]
     // SongbirdInput(#[from] SongbirdInputError),
+
+    #[error(transparent)]
+    Database(#[from] sea_orm::error::DbErr),
+
+    #[error(transparent)]
+    AlreadyBlacklisted(#[from] AlreadyBlacklistedError),
+
+    #[error(transparent)]
+    NotBlacklisted(#[from] NotBlacklistedError),
 }
+
+
+
+pub type Result<R> = core::result::Result<R, Error>;

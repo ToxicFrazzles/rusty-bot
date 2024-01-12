@@ -1,7 +1,11 @@
 use poise::{FrameworkError, Framework};
+use poise::serenity_prelude::*;
 use reqwest::Client as ReqwestClient;
 use sea_orm::{DatabaseConnection, Database};
-use crate::utils::{get_prefix, get_db_url};
+
+use migration::{Migrator, MigratorTrait};
+
+use crate::utils::{get_prefix, get_db_url, get_status};
 use crate::commands::{self, Error as CommandError};
 
 pub struct Data {
@@ -12,6 +16,14 @@ pub struct Data {
 pub async fn build() -> Framework<Data, CommandError>{
     let prefix = get_prefix();
     let db_conn: DatabaseConnection = Database::connect(get_db_url()).await.expect("Failed to create database connection");
+
+    let pending_migrations = Migrator::get_pending_migrations(&db_conn).await.expect("Failed to get list of pending migrations").len();
+    println!("{pending_migrations} migrations pending");
+    if pending_migrations > 0{
+        println!("Applying migrations...");
+        Migrator::up(&db_conn, None).await.expect("Failed to migrate database");
+        println!("Migrations applied. Database up-to-date!");
+    }
     
     poise::Framework::builder()
         .options(poise::FrameworkOptions { 
@@ -44,7 +56,9 @@ pub async fn build() -> Framework<Data, CommandError>{
                     // Prevent from registering commands many times to avoid hitting the discord rate-limit for higher numbers of shards
                     poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 }
-                // ctx.set_activity(Activity::playing(get_status())).await;
+                ctx.set_presence(
+                    Some(ActivityData::custom(get_status())), 
+                    OnlineStatus::Online);
                 Ok(Data{
                     reqwest: ReqwestClient::new(),
                     db: db_conn

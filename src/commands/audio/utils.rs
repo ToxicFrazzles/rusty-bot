@@ -4,8 +4,8 @@ use poise::serenity_prelude::{GuildId, ChannelId};
 use songbird::{Call, Songbird};
 use tokio::sync::Mutex;
 
-use crate::commands::{Context, Result, error::{NotInGuildError, NotInVoiceChannelError, NoVoiceChannelIdError, NoSongbirdError}};
-
+use crate::commands::{Context, Result};
+use crate::error::{NotInGuildError, NotInVoiceChannelError, NoVoiceChannelIdError, NoSongbirdError};
 
 pub async fn get_conn(ctx: &Context<'_>) -> Result<Arc<Mutex<Call>>>{
     let guild_id = ctx.guild().ok_or(NotInGuildError)?.id;
