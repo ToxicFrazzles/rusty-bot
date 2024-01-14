@@ -7,11 +7,14 @@ use migration::{Migrator, MigratorTrait};
 
 use crate::utils::{get_prefix, get_db_url, get_status};
 use crate::commands::{self, Error as CommandError};
+use crate::checks::global_check;
+
 
 pub struct Data {
     pub reqwest: ReqwestClient,
     pub db: DatabaseConnection
 }
+
 
 pub async fn build() -> Framework<Data, CommandError>{
     let prefix = get_prefix();
@@ -45,6 +48,8 @@ pub async fn build() -> Framework<Data, CommandError>{
                 mention_as_prefix: true, 
                 ..Default::default()
             },
+            skip_checks_for_owners: true,
+            command_check: Some(|ctx| Box::pin(global_check(ctx))),
             ..Default::default()
         })
         .setup(move |ctx, ready, framework| {

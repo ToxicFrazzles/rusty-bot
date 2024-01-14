@@ -8,6 +8,8 @@ mod framework;
 mod logic;
 mod error;
 
+mod checks;
+
 #[cfg(test)]
 mod tests;
 

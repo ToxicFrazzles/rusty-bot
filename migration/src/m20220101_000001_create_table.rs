@@ -15,10 +15,8 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Guild::Id)
                             .big_integer()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Guild::Snowflake).string_len(18).not_null().unique_key())
                     .col(ColumnDef::new(Guild::Name).string())
                     .to_owned(),
             )
@@ -33,10 +31,8 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(User::Id)
                             .big_integer()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(User::Snowflake).string_len(18).not_null().unique_key())
                     .col(ColumnDef::new(User::Blacklisted).boolean().default(false))
                     .to_owned(),
             ).await?;
@@ -99,7 +95,6 @@ impl MigrationTrait for Migration {
 enum Guild {
     Table,
     Id,
-    Snowflake,
     Name,
 }
 
@@ -108,7 +103,6 @@ enum Guild {
 enum User {
     Table,
     Id,
-    Snowflake,
     Blacklisted
 }
 

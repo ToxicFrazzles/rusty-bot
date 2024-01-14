@@ -6,8 +6,7 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "guild")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
-    pub snowflake: String,
+    pub id: i64,
     pub name: Option<String>,
 }
 
