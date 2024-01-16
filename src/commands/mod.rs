@@ -4,6 +4,7 @@ pub mod audio;
 pub mod ping;
 pub mod help;
 pub mod blacklist;
+pub mod info;
 
 pub use crate::error::Error;
 pub use crate::error::Result;
@@ -22,5 +23,6 @@ pub fn get() -> Vec<poise::Command<Data, Error>>{
 
         blacklist::blacklist(),
         help::help(),
+        info::info(),
     ]
 }
