@@ -2,3 +2,7 @@ DISCORD_TOKEN="<Discord Bot Token>"
 PREFIX="!"
 DISCORD_STATUS="!help"
 DATABASE_URL="sqlite:db.sqlite?mode=rwc"
+
+
+LOG_LEVEL=""
+RUST_BACKTRACE=""
