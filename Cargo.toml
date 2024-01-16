@@ -3,6 +3,7 @@ members = [".", "migration", "entities"]
 
 
 
+
 [package]
 name = "rusty_bot"
 version = "0.1.0"
@@ -25,11 +26,13 @@ tracing = "^0.1"
 tracing-futures = "^0.2"
 tracing-subscriber = "^0.3"
 url = "2.5.0"
-sea-orm = { version = "^0.12", features = [ "runtime-tokio-rustls", "macros" ] }
+sea-orm = { version = "^0.12", features = [ "runtime-tokio-rustls", "macros", "debug-print" ] }
 regex = "1.10.2"
+sqlx = "0.7.3"
+debug_print = "1.0.0"
 
 [dev-dependencies]
-sea-orm = {features = ["mock"]}
+sea-orm = { version = "^0.12", features = ["mock"]}
 
 
 [features]
