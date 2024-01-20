@@ -1,6 +1,5 @@
 use songbird::input::Input;
 use songbird::input::YoutubeDl;
-use songbird::tracks::Track;
 use url::Url;
 
 use crate::commands::{Context, Error};

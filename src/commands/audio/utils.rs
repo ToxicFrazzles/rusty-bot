@@ -2,8 +2,8 @@ use std::env;
 use std::sync::Arc;
 use std::time::Duration;
 
-use poise::serenity_prelude::{GuildId, ChannelId, async_trait, Http};
-use songbird::input::{Input, File};
+use poise::serenity_prelude::{GuildId, ChannelId, async_trait};
+use songbird::input::File;
 use songbird::{Call, Songbird, EventContext, EventHandler as VoiceEventHandler, TrackEvent, Event};
 use tokio::sync::Mutex;
 use tokio::time::sleep;
@@ -19,7 +19,7 @@ struct TrackEndHandler {
 #[async_trait]
 impl VoiceEventHandler for TrackEndHandler {
     async fn act(&self, ctx: &EventContext<'_>) -> Option<Event> {
-        if let EventContext::Track(track_list) = ctx {
+        if let EventContext::Track(_track_list) = ctx {
             // Track(s) has ended
             if self.conn.lock().await.queue().is_empty(){
                 // Nothing else in the queue
