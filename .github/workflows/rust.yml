@@ -10,14 +10,18 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    - name: Test
+    - name: Cargo Test
       run: cargo test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - uses: actions/checkout@v3
     - name: Build (Release)
       run: cargo build --release
     - name: Upload a Build Artifact
