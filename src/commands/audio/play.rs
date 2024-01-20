@@ -1,5 +1,6 @@
 use songbird::input::Input;
 use songbird::input::YoutubeDl;
+use songbird::tracks::Track;
 use url::Url;
 
 use crate::commands::{Context, Error};
@@ -30,7 +31,13 @@ pub async fn play(
     };
 
     let metadata = src.aux_metadata().await.unwrap();
-    let _handle = conn.lock().await.enqueue_input(src).await;
+    println!("{:?}", &metadata.duration);
+    if metadata.duration == None{
+        ctx.say("The track requested is either a livestream or no duration could be found").await?;
+        return Ok(());
+    }else{
+        let _handle = conn.lock().await.enqueue_input(src).await;
+    }
 
     let title = metadata.title.or(Some("No Title Found".to_string())).unwrap();
 
