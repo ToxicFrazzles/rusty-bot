@@ -22,8 +22,6 @@ pub async fn play(
     let req_client = ctx.data().reqwest.clone();
     what = what.trim_start_matches("<").trim_end_matches(">").to_string();
 
-
-
     let mut src: Input = if let Ok(url) = Url::parse(&what) {
         YoutubeDl::new(req_client, url.to_string()).into()
     }else{
@@ -31,13 +29,11 @@ pub async fn play(
     };
 
     let metadata = src.aux_metadata().await.unwrap();
-    println!("{:?}", &metadata.duration);
     if metadata.duration == None{
         ctx.say("The track requested is either a livestream or no duration could be found").await?;
         return Ok(());
-    }else{
-        let _handle = conn.lock().await.enqueue_input(src).await;
     }
+    let _handle = conn.lock().await.enqueue_input(src).await;
 
     let title = metadata.title.or(Some("No Title Found".to_string())).unwrap();
 

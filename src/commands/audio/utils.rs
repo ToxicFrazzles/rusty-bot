@@ -1,11 +1,44 @@
 use std::sync::Arc;
 
-use poise::serenity_prelude::{GuildId, ChannelId};
-use songbird::{Call, Songbird};
+use poise::serenity_prelude::{GuildId, ChannelId, async_trait, Http};
+use songbird::{Call, Songbird, EventContext, EventHandler as VoiceEventHandler, TrackEvent, Event};
 use tokio::sync::Mutex;
 
 use crate::commands::{Context, Result};
 use crate::error::{NotInGuildError, NotInVoiceChannelError, NoVoiceChannelIdError, NoSongbirdError};
+
+struct TrackEndHandler {
+    conn: Arc<Mutex<Call>>
+}
+
+#[async_trait]
+impl VoiceEventHandler for TrackEndHandler {
+    async fn act(&self, ctx: &EventContext<'_>) -> Option<Event> {
+        if let EventContext::Track(track_list) = ctx {
+            // Track(s) has ended
+            if self.conn.lock().await.queue().is_empty(){
+                // Nothing else in the queue
+                let _ = self.conn.lock().await.leave().await;
+            }
+        }
+
+        None
+    }
+}
+
+// struct DisconnectHandler{
+//     conn: Arc<Mutex<Call>>
+// }
+// #[async_trait]
+// impl VoiceEventHandler for DisconnectHandler{
+//     async fn act(&self, ctx: &EventContext<'_>) -> Option<Event>{
+//         if let EventContext::ClientDisconnect(dc) = ctx{
+//             // Another user has disconnected
+//         };
+//         None
+//     }
+// }
+
 
 pub async fn get_conn(ctx: &Context<'_>) -> Result<Arc<Mutex<Call>>>{
     let guild_id = ctx.guild().ok_or(NotInGuildError)?.id;
@@ -46,6 +79,10 @@ pub async fn join_channel(ctx: &Context<'_>) -> Result<(GuildId, ChannelId, Arc<
             Err(err)
         }
     }?;
+    conn.lock().await.add_global_event(
+        Event::Track(TrackEvent::End),
+        TrackEndHandler{conn: conn.clone()}
+    );
 
     Ok((guild_id, channel_id, conn, manager))
 }
