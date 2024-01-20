@@ -1,14 +1,19 @@
+use std::env;
 use std::sync::Arc;
+use std::time::Duration;
 
 use poise::serenity_prelude::{GuildId, ChannelId, async_trait, Http};
+use songbird::input::{Input, File};
 use songbird::{Call, Songbird, EventContext, EventHandler as VoiceEventHandler, TrackEvent, Event};
 use tokio::sync::Mutex;
+use tokio::time::sleep;
 
 use crate::commands::{Context, Result};
 use crate::error::{NotInGuildError, NotInVoiceChannelError, NoVoiceChannelIdError, NoSongbirdError};
 
 struct TrackEndHandler {
-    conn: Arc<Mutex<Call>>
+    conn: Arc<Mutex<Call>>,
+    leave_clip: Option<String>
 }
 
 #[async_trait]
@@ -18,6 +23,10 @@ impl VoiceEventHandler for TrackEndHandler {
             // Track(s) has ended
             if self.conn.lock().await.queue().is_empty(){
                 // Nothing else in the queue
+                if self.leave_clip != None{
+                    self.conn.lock().await.play_only_input(File::new(self.leave_clip.clone().unwrap()).into());
+                    sleep(Duration::from_secs(1)).await;
+                }
                 let _ = self.conn.lock().await.leave().await;
             }
         }
@@ -79,9 +88,10 @@ pub async fn join_channel(ctx: &Context<'_>) -> Result<(GuildId, ChannelId, Arc<
             Err(err)
         }
     }?;
+    let leave_clip = env::var("LEAVE_CLIP").ok();
     conn.lock().await.add_global_event(
         Event::Track(TrackEvent::End),
-        TrackEndHandler{conn: conn.clone()}
+        TrackEndHandler{conn: conn.clone(), leave_clip: leave_clip}
     );
 
     Ok((guild_id, channel_id, conn, manager))
@@ -95,6 +105,11 @@ pub async fn leave_server(ctx: &Context<'_>) -> Result<()>{
         .ok_or(NoSongbirdError)?;
     let conn = manager.get(guild_id).ok_or(NotInVoiceChannelError)?;
     conn.lock().await.queue().stop();
+
+    if let Some(leave_clip) = env::var("LEAVE_CLIP").ok(){
+        conn.lock().await.play_only_input(File::new(leave_clip.clone()).into());
+        sleep(Duration::from_secs(1)).await;
+    }
     conn.lock().await.leave().await?;
     Ok(())
 }
