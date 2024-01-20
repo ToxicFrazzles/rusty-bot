@@ -57,6 +57,7 @@ pub async fn leave_server(ctx: &Context<'_>) -> Result<()>{
         .await
         .ok_or(NoSongbirdError)?;
     let conn = manager.get(guild_id).ok_or(NotInVoiceChannelError)?;
+    conn.lock().await.queue().stop();
     conn.lock().await.leave().await?;
     Ok(())
 }
