@@ -5,9 +5,11 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
 #[sea_orm(table_name = "guild")]
 pub struct Model {
-    #[sea_orm(primary_key)]
+    #[sea_orm(primary_key, auto_increment = false)]
     pub id: i64,
     pub name: Option<String>,
+    pub leave_timeout: i64,
+    pub skip_votes: Decimal
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
