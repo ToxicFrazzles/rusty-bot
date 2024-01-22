@@ -91,7 +91,7 @@ pub async fn guild_set<S>(
     event!(Level::INFO, "User does not exist in database. Creating them and setting blacklist flag appropriately.");
     let user = User{
         _id: snowflake.into(),
-        global_blacklist: blacklist,
+        blacklisted_guilds: vec![guild_id],
         ..Default::default()
     };
     if !blacklist{
