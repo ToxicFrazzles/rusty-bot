@@ -1,8 +1,9 @@
 DISCORD_TOKEN="<Discord Bot Token>"
 PREFIX="!"
 DISCORD_STATUS="!help"
-DATABASE_URL="sqlite:db.sqlite?mode=rwc"
 
-
-LOG_LEVEL=""
+LOG_LEVEL="WARN"
 RUST_BACKTRACE=""
+
+MONGODB_CONNECTION="mongodb://localhost:27017/?directConnection=true"
+MONGODB_DATABASE="rusty-bot"
