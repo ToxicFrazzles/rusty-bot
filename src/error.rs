@@ -53,7 +53,7 @@ pub enum Error {
     // SongbirdInput(#[from] SongbirdInputError),
 
     #[error(transparent)]
-    Database(#[from] sea_orm::error::DbErr),
+    Database(#[from] mongodb::error::Error),
 
     #[error(transparent)]
     AlreadyBlacklisted(#[from] AlreadyBlacklistedError),

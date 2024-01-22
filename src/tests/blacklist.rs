@@ -1,19 +1,12 @@
-use sea_orm::Database;
-use sea_orm::{
-    entity::prelude::*, entity::*, //tests_cfg::*,
-    DatabaseBackend, MockDatabase, Transaction,
-};
 use crate::error::{Error, Result};
 use crate::logic::blacklist::{global_set, is_blacklisted, guild_set};
-use entities::user::{Model as UserModel};
-use entities::member::{Entity as MemberEntity, Column as MemberCol, ActiveModel as MemberActive};
-use entities::guild::{Entity as GuildEntity, Column as GuildCol, ActiveModel as GuildActive};
-use migration::{Migrator, MigratorTrait};
+use database;
 
 
-async fn test_db_setup() -> Result<DatabaseConnection>{
-    let db = Database::connect("sqlite::memory:").await?;
-    Migrator::up(&db, None).await?;
+
+async fn test_db_setup() -> Result<database::Database>{
+    let client = database::connect("mongodb://localhost:27017/".into()).await?;
+    let db = client.database("rusty-bot-test");
     return Ok(db)
 }
 

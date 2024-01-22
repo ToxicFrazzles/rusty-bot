@@ -1,9 +1,10 @@
+use std::env;
+
 use poise::{FrameworkError, Framework};
 use poise::serenity_prelude::*;
 use reqwest::Client as ReqwestClient;
-use sea_orm::{DatabaseConnection, Database};
 
-use migration::{Migrator, MigratorTrait};
+use database::{DatabaseConnection, connect};
 
 use crate::utils::{get_prefix, get_db_url, get_status};
 use crate::commands::{self, Error as CommandError};
@@ -12,21 +13,15 @@ use crate::checks::global_check;
 
 pub struct Data {
     pub reqwest: ReqwestClient,
-    pub db: DatabaseConnection
+    pub db: mongodb::Database
 }
 
 
 pub async fn build() -> Framework<Data, CommandError>{
     let prefix = get_prefix();
-    let db_conn: DatabaseConnection = Database::connect(get_db_url()).await.expect("Failed to create database connection");
-
-    let pending_migrations = Migrator::get_pending_migrations(&db_conn).await.expect("Failed to get list of pending migrations").len();
-    println!("{pending_migrations} migrations pending");
-    if pending_migrations > 0{
-        println!("Applying migrations...");
-        Migrator::up(&db_conn, None).await.expect("Failed to migrate database");
-        println!("Migrations applied. Database up-to-date!");
-    }
+    let mongo_conn_string = env::var("MONGODB_CONNECTION").expect("No MONGODB_CONNECTION variable set");
+    let db_conn: DatabaseConnection = database::connect(mongo_conn_string).await.expect("Failed to connect to mongodb database");
+    let db = db_conn.database(&env::var("MONGODB_DATABASE").expect("No MONGODB_DATABASE specified"));
     
     poise::Framework::builder()
         .options(poise::FrameworkOptions { 
@@ -66,7 +61,7 @@ pub async fn build() -> Framework<Data, CommandError>{
                     OnlineStatus::Online);
                 Ok(Data{
                     reqwest: ReqwestClient::new(),
-                    db: db_conn
+                    db: db
                 })
             })
         }).build()

@@ -43,12 +43,13 @@ async fn main(){
         | GatewayIntents::MESSAGE_CONTENT 
         | GatewayIntents::GUILD_VOICE_STATES 
         | GatewayIntents::GUILD_MEMBERS;
-    // .client_settings(|c| c.register_songbird())
     let framework = framework::build().await;
     let mut client = ClientBuilder::new(get_token(), intents)
         .framework(framework).register_songbird().await.expect("Error creating client");
- 
-    client.start_autosharded().await.expect("Client Error");
 
-    // framework::build().run_autosharded().await.expect("Error");
+    tokio::spawn(async move{
+        // Start the bot
+        client.start_autosharded().await.expect("Client Error");
+    });
+    let _signal_err = tokio::signal::ctrl_c().await;
 }

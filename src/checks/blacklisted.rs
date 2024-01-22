@@ -9,7 +9,7 @@ pub async fn blacklisted(ctx: Context<'_>) -> Result<bool, Error>{
         let who = ctx.author().id.to_string();
         let guild_id = ctx.guild_id().expect("No guild ID").to_string();
 
-        allowed &= is_blacklisted(db, who, guild_id).await.unwrap();
+        allowed &= !is_blacklisted(db, who, guild_id).await.unwrap();
 
-        Ok(allowed)
+        Ok(!allowed)
 }
