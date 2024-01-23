@@ -4,7 +4,7 @@ use poise::{FrameworkError, Framework};
 use poise::serenity_prelude::*;
 use reqwest::Client as ReqwestClient;
 
-use database::{DatabaseConnection, connect};
+use database::{DatabaseConnection, LogEntry};
 
 use crate::utils::{get_prefix, get_db_url, get_status};
 use crate::commands::{self, Error as CommandError};
@@ -28,12 +28,18 @@ pub async fn build() -> Framework<Data, CommandError>{
             commands: commands::get(), 
             on_error: |error| {
                 Box::pin(async move {
+                    let db = &error.ctx().unwrap().data().db;
                     match error {
                         FrameworkError::Command { error, ctx , .. } => {
                             let _ = ctx.say(error.to_string()).await;
+                            println!("Add Log");
+                            LogEntry::add_log(db, 3, error.to_string()).await.unwrap();
                         },
                         error => {
+                            let msg = (&error).to_string();
                             let _ = poise::builtins::on_error(error).await;
+                            println!("Add Log");
+                            LogEntry::add_log(db, 4, msg).await.unwrap();
                         }
                     }
                 })

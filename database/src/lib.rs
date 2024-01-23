@@ -5,9 +5,11 @@ pub use mongodb::{Client as DatabaseConnection, Database};
 // mod helpers;
 mod user;
 mod guild;
+mod log;
 pub mod types;
 pub use user::User;
 pub use guild::Guild;
+pub use log::LogEntry;
 
 
 pub async fn connect(conn_string: String) -> mongodb::error::Result<DatabaseConnection>{
