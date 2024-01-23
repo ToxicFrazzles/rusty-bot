@@ -61,7 +61,6 @@ pub async fn is_blacklisted<S>(
     
     if let Some(user) = User::find_by_snowflake(db, &snowflake).await{
         event!(Level::DEBUG, "User exists. Checking global and guild blacklist status");
-        dbg!(user.blacklisted_guilds.contains(&guild_id));
         return Ok(user.global_blacklist || user.blacklisted_guilds.contains(&guild_id));
     }
     Ok(false)
