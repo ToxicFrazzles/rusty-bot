@@ -61,5 +61,3 @@ jobs:
         path: |
           ./target/release/rusty_bot
           ./target/release/rusty_web
-    # - name: Run tests
-    #   run: cargo test --verbose
