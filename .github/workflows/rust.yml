@@ -57,7 +57,7 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Linux SQLite
+        name: Linux Release
         path: |
           ./target/release/rusty_bot
           ./target/release/rusty_web
