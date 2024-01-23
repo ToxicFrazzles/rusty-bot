@@ -61,3 +61,9 @@ jobs:
         path: |
           ./target/release/rusty_bot
           ./target/release/rusty_web
+    - name: Notify Discord
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@master
+      with:
+        args: "Rusty-bot successfully built and build artifacts uploaded 😊"
