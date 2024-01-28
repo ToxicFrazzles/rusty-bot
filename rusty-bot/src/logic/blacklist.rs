@@ -38,17 +38,10 @@ pub async fn global_set<S>(
 }
 
 pub async fn global_list(db: &mongodb::Database) -> Result<Vec<String>>{
-    todo!();
-    // let users = UserEntity::find()
-    //     .filter(UserCol::Blacklisted.eq(true))
-    //     .all(db_conn)
-    //     .await?;
-
-    // Ok(users.iter().map(|user|{
-    //     (user.id as u64).to_string()
-    // })
-    // .collect())
-    Ok(vec![])
+    let blacklisted = User::get_global_blacklisted_users(db).await;
+    Ok(blacklisted.iter().map(|user|{
+        user._id.to_string()
+    }).collect())
 }
 
 pub async fn is_blacklisted<S>(
@@ -103,17 +96,9 @@ pub async fn guild_set<S>(
 
 pub async fn guild_list<S>(db_conn: &mongodb::Database, guild_id: S) -> Result<Vec<String>>
 where S: Into<String>{
-    todo!();
-    // let guild_id = at_to_snowflake(guild_id).unwrap();
-    // let members = MemberEntity::find()
-    //     .filter(MemberCol::Guild.eq(guild_id))
-    //     .filter(MemberCol::Blacklisted.eq(true))
-    //     .all(db_conn)
-    //     .await?;
-
-    // Ok(members.iter().map(|member|{
-    //     (member.user as u64).to_string()
-    // })
-    // .collect())
-    Ok(vec![])
+    let guild_id = at_to_snowflake(guild_id).expect("Malformed guild identifier");
+    let blacklisted = User::get_blacklisted_users_in_guild(db_conn, &guild_id).await;
+    Ok(blacklisted.iter().map(|user|{
+        user._id.to_string()
+    }).collect())
 }

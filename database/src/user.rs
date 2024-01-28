@@ -1,3 +1,4 @@
+use futures::{StreamExt, TryStreamExt};
 use mongodb::bson::{doc, oid::ObjectId};
 use serde::{Serialize, Deserialize};
 use crate::types::Snowflake;
@@ -80,6 +81,19 @@ impl User {
             coll.insert_one(self, None).await?;
         }
         Ok(())
+    }
+
+    pub async fn get_blacklisted_users_in_guild(db: &mongodb::Database, guild: &Snowflake)->Vec<User>{
+        let coll = db.collection::<User>(USER_COLLECTION);
+        let oid: ObjectId = guild.clone().into();
+        let cursor = coll.find(doc! {"blacklisted_guilds": oid}, None).await.unwrap();
+        cursor.try_collect().await.unwrap()
+    }
+
+    pub async fn get_global_blacklisted_users(db: &mongodb::Database)->Vec<User>{
+        let coll = db.collection::<User>(USER_COLLECTION);
+        let cursor = coll.find(doc! {"global_blacklist": true}, None).await.unwrap();
+        cursor.try_collect().await.unwrap()
     }
 }
 

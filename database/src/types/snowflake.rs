@@ -61,6 +61,12 @@ impl Into<String> for Snowflake{
     }
 }
 
+impl Snowflake{
+    pub fn to_string(&self) -> String{
+        self.snowflake.to_string()
+    }
+}
+
 // impl TryInto<ObjectId> for Snowflake{
 //     fn try_into(self) -> Result<ObjectId, Self::Error> {
 //         let int_flake: u64 = self.snowflake.parse::<u64>().unwrap();
