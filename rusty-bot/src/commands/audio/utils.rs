@@ -2,9 +2,10 @@ use std::env;
 use std::sync::Arc;
 use std::time::Duration;
 
+use database::Song;
 use poise::serenity_prelude::{GuildId, ChannelId, async_trait};
-use songbird::input::File;
-use songbird::{Call, Songbird, EventContext, EventHandler as VoiceEventHandler, TrackEvent, Event};
+use songbird::input::{File, Input};
+use songbird::{Call, CoreEvent, Event, EventContext, EventHandler as VoiceEventHandler, Songbird, TrackEvent};
 use tokio::sync::Mutex;
 use tokio::time::sleep;
 
@@ -34,19 +35,6 @@ impl VoiceEventHandler for TrackEndHandler {
         None
     }
 }
-
-// struct DisconnectHandler{
-//     conn: Arc<Mutex<Call>>
-// }
-// #[async_trait]
-// impl VoiceEventHandler for DisconnectHandler{
-//     async fn act(&self, ctx: &EventContext<'_>) -> Option<Event>{
-//         if let EventContext::ClientDisconnect(dc) = ctx{
-//             // Another user has disconnected
-//         };
-//         None
-//     }
-// }
 
 
 pub async fn get_conn(ctx: &Context<'_>) -> Result<Arc<Mutex<Call>>>{
@@ -93,6 +81,7 @@ pub async fn join_channel(ctx: &Context<'_>) -> Result<(GuildId, ChannelId, Arc<
         Event::Track(TrackEvent::End),
         TrackEndHandler{conn: conn.clone(), leave_clip: leave_clip}
     );
+    
 
     Ok((guild_id, channel_id, conn, manager))
 }

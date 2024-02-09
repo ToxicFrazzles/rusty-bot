@@ -29,8 +29,8 @@ pub async fn play(
 
     let metadata = src.aux_metadata().await.unwrap();
     if metadata.duration == None{
-        ctx.say("The track requested is either a livestream or no duration could be found").await?;
-        return Ok(());
+    ctx.say("The track requested is either a livestream or no duration could be found").await?;
+    return Ok(());
     }
     let _handle = conn.lock().await.enqueue_input(src).await;
 

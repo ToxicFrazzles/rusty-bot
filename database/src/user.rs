@@ -1,4 +1,4 @@
-use futures::{StreamExt, TryStreamExt};
+use futures::TryStreamExt;
 use mongodb::bson::{doc, oid::ObjectId};
 use serde::{Serialize, Deserialize};
 use crate::types::Snowflake;

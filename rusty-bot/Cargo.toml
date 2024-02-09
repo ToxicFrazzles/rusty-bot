@@ -12,7 +12,7 @@ poise = "0.6.1-rc1"
 reqwest = "0.11.23"
 serenity = { version = "^0.12", features = ["voice", "model"], default-features = false}
 songbird = { git = "https://github.com/serenity-rs/songbird.git", branch="current", features = [ "builtin-queue"]}
-symphonia = {version = "0.5.3", features=["all-codecs", "all-formats"]}
+symphonia = {version = "0.5.3", features=["all"]}
 thiserror = "1.0.56"
 tokio = { version = "^1.21", features = ["macros", "rt-multi-thread", "sync", "time", "signal", "full"]}
 tracing = "^0.1"

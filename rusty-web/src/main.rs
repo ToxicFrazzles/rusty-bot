@@ -1,11 +1,8 @@
 use rocket::*;
-use rocket_dyn_templates::{context, Template};
 
+mod session_fairing;
+mod views;
 
-#[get("/")]
-fn index() -> Template{
-    Template::render("index", context!{})
-}
 
 
 #[launch]
@@ -13,6 +10,6 @@ fn rocket() -> _ {
     // Load .env file if it exists. Falls back to loading the variables from the actual environment
     dotenv::dotenv().ok();
     rocket::build()
-        .mount("/", routes![index])
-        .attach(Template::fairing())
+        .attach(session_fairing::SessionFairing{})
+        .mount("/", views::get_routes())
 }

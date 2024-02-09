@@ -5,11 +5,18 @@ pub use mongodb::{Client as DatabaseConnection, Database};
 // mod helpers;
 mod user;
 mod guild;
+mod playlist;
 mod log;
+mod oauth;
 pub mod types;
 pub use user::User;
+pub use oauth::Oauth;
 pub use guild::Guild;
 pub use log::LogEntry;
+pub use playlist::{Playlist, Song, PlaylistVisibility};
+
+
+pub type Result<T> = std::result::Result<T, mongodb::error::Error>;
 
 
 pub async fn connect(conn_string: String) -> mongodb::error::Result<DatabaseConnection>{
