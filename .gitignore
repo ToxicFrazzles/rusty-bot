@@ -16,6 +16,7 @@ target/
 .env
 db.sqlite
 leave_sound.opus
+build_output/
 
 
 
