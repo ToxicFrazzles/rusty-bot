@@ -19,9 +19,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/rusty-web"
             },
-            "problemMatcher": [
-                "$rustc-watch"
-            ],
+            "problemMatcher": [],
             "isBackground": true
         },
         {
@@ -34,9 +32,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/rusty-bot"
             },
-            "problemMatcher": [
-                "$rustc-watch"
-            ],
+            "problemMatcher": [],
             "isBackground": true
         },
         {
