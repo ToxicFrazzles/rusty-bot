@@ -4,8 +4,8 @@ use std::time::Duration;
 
 use database::Song;
 use poise::serenity_prelude::{GuildId, ChannelId, async_trait};
-use songbird::input::{File, Input};
-use songbird::{Call, CoreEvent, Event, EventContext, EventHandler as VoiceEventHandler, Songbird, TrackEvent};
+use songbird::input::File;
+use songbird::{Call, Event, EventContext, EventHandler as VoiceEventHandler, Songbird, TrackEvent};
 use tokio::sync::Mutex;
 use tokio::time::sleep;
 
@@ -14,7 +14,8 @@ use crate::error::{NotInGuildError, NotInVoiceChannelError, NoVoiceChannelIdErro
 
 struct TrackEndHandler {
     conn: Arc<Mutex<Call>>,
-    leave_clip: Option<String>
+    leave_clip: Option<String>,
+    joining: bool,
 }
 
 #[async_trait]
@@ -22,7 +23,7 @@ impl VoiceEventHandler for TrackEndHandler {
     async fn act(&self, ctx: &EventContext<'_>) -> Option<Event> {
         if let EventContext::Track(_track_list) = ctx {
             // Track(s) has ended
-            if self.conn.lock().await.queue().is_empty(){
+            if self.conn.lock().await.queue().is_empty() && !self.joining{
                 // Nothing else in the queue
                 if self.leave_clip != None{
                     self.conn.lock().await.play_only_input(File::new(self.leave_clip.clone().unwrap()).into());
@@ -30,6 +31,7 @@ impl VoiceEventHandler for TrackEndHandler {
                 }
                 let _ = self.conn.lock().await.leave().await;
             }
+            self.joining = false;
         }
 
         None
@@ -79,7 +81,7 @@ pub async fn join_channel(ctx: &Context<'_>) -> Result<(GuildId, ChannelId, Arc<
     let leave_clip = env::var("LEAVE_CLIP").ok();
     conn.lock().await.add_global_event(
         Event::Track(TrackEvent::End),
-        TrackEndHandler{conn: conn.clone(), leave_clip: leave_clip}
+        TrackEndHandler{conn: conn.clone(), leave_clip: leave_clip, joining: true}
     );
     
 
