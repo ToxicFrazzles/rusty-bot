@@ -1,0 +1,48 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Web Frontend Dev",
+            "type": "npm",
+            "script": "dev",
+            "options": {
+                "cwd": "${workspaceFolder}/rusty-web/frontend"
+            }
+        },
+        {
+            "label": "Web Backend Dev",
+            "type": "process",
+            "command": "cargo-watch",
+            "args": [
+                "-x run"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/rusty-web"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "Bot Dev",
+            "type": "process",
+            "command": "cargo-watch",
+            "args": [
+                "-x run"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/rusty-bot"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "Dev Run",
+            "dependsOn": [
+                "Web Frontend Dev",
+                "Web Backend Dev",
+                "Bot Dev"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

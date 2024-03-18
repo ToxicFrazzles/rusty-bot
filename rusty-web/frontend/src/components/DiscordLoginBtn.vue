@@ -1,15 +1,13 @@
 <script setup lang="ts">
+    import { useUserStore } from '@/stores/user';
     import DiscordLogoBlue from '../assets/DiscordLogoBlue.vue';
-    let notReady = true;
-    
-
-
-    let to = "";
+    const user = useUserStore();
+    let auth_url = await user.getAuthUrl();
 </script>
 
 
 <template>
-    <a v-bind:to="to" class="m-auto md:my-1 hover:text-blue-500 underline text-center">
+    <a :href="auth_url" class="m-auto md:my-1 hover:text-blue-500 underline text-center">
         Login with<br>
         <DiscordLogoBlue class="min-h-4"></DiscordLogoBlue>
     </a>

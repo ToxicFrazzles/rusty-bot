@@ -1,6 +1,7 @@
 use rocket::*;
 
 mod session_fairing;
+mod cors_fairing;
 mod views;
 
 
@@ -11,5 +12,6 @@ fn rocket() -> _ {
     dotenv::dotenv().ok();
     rocket::build()
         .attach(session_fairing::SessionFairing{})
+        .attach(cors_fairing::CORS)
         .mount("/", views::get_routes())
 }
